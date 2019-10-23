@@ -66,7 +66,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     ALU_op aluOp (alu_op, inst_out[14:12], inst_out[30], alu_ctrl_out);
     
     wire carry_flag, zero_flag, over_flag, sign_flag;
-    assign z_flag_ext = z_flag;
+    assign z_flag_ext = zero_flag;
     wire [31:0]alu_out;
     assign alu_out_ext = alu_out;
     prv32_ALU alu (read_data_1, alu_mux_out, imm_out[4:0], alu_out, carry_flag, zero_flag, over_flag, sign_flag, alu_ctrl_out);
