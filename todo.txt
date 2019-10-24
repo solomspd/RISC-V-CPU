@@ -1,1 +1,31 @@
-
+AND:
+OR:
+SRA:
+SRL:
+XOR:
+SLTU:
+SLT:
+SUB:
+ADD:
+SRAI:
+SRLI: Abdelsalam
+SLLI: Abdelsalam
+ANDI: Abdelsalam
+SW:
+SH:
+SB:
+LHU:
+LBU:
+LW:
+LH:
+LB:
+BGEU: Abdelsalam
+BLTU: Abdelsalam
+BGE: Abdelsalam
+BLT: Abdelsalam
+BNE: Abdelsalam
+BEQ: Abdelsalam
+JALR:
+JAL:
+AUIPC:
+LUI:
