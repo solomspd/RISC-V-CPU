@@ -19,6 +19,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
+`include "defines.v"
+
 module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_ext, mem_read_ext, mem_to_reg_ext, mem_write_ext, alu_src_ext, reg_write_ext,
  output [1:0]alu_op_ext, output z_flag_ext, output [31:0]alu_ctrl_out_ext, output [31:0]PC_inc_ext, output [31:0]pc_gen_out_ext, output [31:0]PC_ext, output [31:0]PC_in_ext,
  output [31:0]data_read_1_ext, output [31:0]data_read_2_ext, output [31:0]write_data_ext, output [31:0]imm_out_ext, output [31:0]shift_ext, output [31:0]alu_mux_ext
@@ -34,8 +36,8 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     assign inst_out_ext = inst_out;
     InstMem inst_mem (PC >> 2, inst_out);
     
-    wire branch, mem_read, mem_to_reg, mem_write, alu_src, reg_write;
-    assign branch_ext = branch;
+    wire can_branch, mem_read, mem_to_reg, mem_write, alu_src, reg_write;
+    assign branch_ext = can_branch;
     assign mem_read_ext = mem_read;
     assign mem_to_reg_ext = mem_to_reg;
     assign mem_write_ext = mem_write;
@@ -43,7 +45,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     assign reg_write_ext = reg_write;
     wire [1:0]alu_op;
     assign alu_op_ext = alu_op;
-    control_unit controlUnit (inst_out[6:2], branch, mem_read, mem_to_reg, mem_write, alu_src, reg_write, alu_op);
+    control_unit controlUnit (inst_out[6:2], can_branch, mem_read, mem_to_reg, mem_write, alu_src, reg_write, alu_op);
     
     wire [31:0]write_data;
     assign write_data_ext = write_data;
@@ -51,7 +53,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     assign data_read_1_ext = read_data_1;
     wire [31:0]read_data_2;    
     assign data_read_2_ext = read_data_2;
-    RegFile reg_file (clk, rst, inst_out[19:15], inst_out[24:20], inst_out[11:7], write_data, reg_write, read_data_1, read_data_2);
+    RegFile reg_file (clk, rst, inst_out[`IR_rs1], inst_out[`IR_rs2], inst_out[`IR_rd], write_data, reg_write, read_data_1, read_data_2);
     
     wire [31:0]imm_out;
     assign imm_out_ext = imm_out;
@@ -72,7 +74,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     prv32_ALU alu (read_data_1, alu_mux_out, imm_out[4:0], alu_out, carry_flag, zero_flag, over_flag, sign_flag, alu_ctrl_out);
 
     wire should_branch;
-    branch branch_mod (inst_out[14:30], zero_flag, carry_flag, over_flag, sign_flag, should_branch);
+    branch branch_mod (inst_out[30:14], zero_flag, carry_flag, over_flag, sign_flag, should_branch);
     
     wire [31:0]data_mem_out;
     assign data_mem_out_ext = data_mem_out;
@@ -95,6 +97,6 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     ripple pc_inc (PC, 4'b100, pc_inc_out, dummy_carry_2);
     
     
-    multiplexer pc_mux (pc_inc_out, pc_gen_out, branch & should_branch, PC_in);
+    multiplexer pc_mux (pc_inc_out, pc_gen_out, can_branch & should_branch, PC_in);
 
 endmodule
