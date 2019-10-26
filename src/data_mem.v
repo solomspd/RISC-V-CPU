@@ -3,7 +3,7 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 10/01/2019 02:35:50 PM
+// Create Date: 26/10/2019 02:35:50 PM
 // Design Name: 
 // Module Name: data_mem
 // Project Name: 
@@ -20,21 +20,49 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module DataMem (input clk, input MemRead, input MemWrite, input [5:0] addr, input [31:0] data_in, output [31:0] data_out);
+module DataMem (input clk, input MemRead, input MemWrite, input [5:0] addr,input [2:0]func, input [31:0] data_in, output [31:0] data_out);
 
-    reg [31:0] mem [0:63];
+  reg [7:0] datamemory [0:63];  
+  wire [7:0] addr1,addr;
+  wire [7:0] addr2;
+  wire [7:0] addr3;
+     assign addr=data_in[7:0];
+     assign addr1=data_in[15:8];
+     assign addr2=data_in[24:16];
+     assign addr3=data_in[31:24];  
      
     always @(posedge clk) begin
+
         if (MemWrite & ~MemRead)
-            mem[addr] <= data_in;
+	if (func3 == 3'b010) 
+            mem[addr] <= addr;
+		 mem[addr+1]<=addr1;
+		 mem[addr+2]<=addr2;
+		 mem[addr+3]<=addr3;
+      else if (fun3 == 3'b001)
+		 mem[addr] <= addr;
+ 		 mem[addr+1] <= addr1;
+      else
+   		 me[addr] <= addr;
+
     end
 
-    assign data_out = MemRead & ~MemWrite ? mem[addr]:0;
+
+if (MemRead & ~MemWrite)
+ if (func3 == 3'b010) //sw
+    assign data_out[7:0] = mem[addr];
+    assign data_out[15:8] = mem[addr+1];
+    assign data_out[24:16] = mem[addr+2];
+    assign data_out[24:16] = mem[addr+3];
+
+ else if (func == 3'b001)//sh
+    assign data_out[7:0] = mem[addr];
+    assign data_out[15:8] = mem[addr+1];
+
+ else //sb
+    assign data_out[7:0] = mem[addr];
+
     
-    initial begin
-        mem[0]=32'd1;
-        mem[1]=32'd256;
-    end
-    
+       
 endmodule
 
