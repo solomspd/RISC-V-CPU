@@ -45,7 +45,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     assign reg_write_ext = reg_write;
     wire [1:0]alu_op;
     assign alu_op_ext = alu_op;
-    control_unit controlUnit (inst_out[6:2], can_branch, mem_read, mem_to_reg, mem_write, alu_src, reg_write, alu_op);
+    control_unit controlUnit (inst_out[`IR_opcode], can_branch, mem_read, mem_to_reg, mem_write, alu_src, reg_write, alu_op);
     
     wire [31:0]write_data;
     assign write_data_ext = write_data;
@@ -65,7 +65,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     
     wire [3:0] alu_ctrl_out;
     assign alu_ctrl_out_ext = alu_ctrl_out;
-    ALU_op aluOp (alu_op, inst_out[14:12], inst_out[30], alu_ctrl_out);
+    ALU_op aluOp (alu_op, inst_out[`IR_funct3], inst_out[30], alu_ctrl_out);
     
     wire carry_flag, zero_flag, over_flag, sign_flag;
     assign z_flag_ext = zero_flag;
