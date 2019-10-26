@@ -47,22 +47,31 @@ module DataMem (input clk, input MemRead, input MemWrite, input [5:0] addr,input
 
     end
 
-
+always @(posedge clk)
+    begin          
 if (MemRead & ~MemWrite)
- if (func3 == 3'b010) //sw
+
+ if (func3 == 3'b010) //LW
     assign data_out[7:0] = mem[addr];
     assign data_out[15:8] = mem[addr+1];
     assign data_out[24:16] = mem[addr+2];
     assign data_out[24:16] = mem[addr+3];
 
- else if (func == 3'b001)//sh
+ else if (func3 == 3'b001)//LH
     assign data_out[7:0] = mem[addr];
     assign data_out[15:8] = mem[addr+1];
 
- else //sb
+else if (func3 == 3'b101)//Halfword unsigned
+    assign data_out= {16'b0,mem[addr],mem[addr+1]}
+
+else if (func3 == 3'b100)//BYTE unsigned
+    assign data_out= {24'b0,mem[addr]}
+
+
+ else //lb
     assign data_out[7:0] = mem[addr];
 
-    
+    end
        
 endmodule
 
