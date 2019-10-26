@@ -1,24 +1,24 @@
-AND:
-OR:
-SRA:
-SRL:
-XOR:
-SLTU:
-SLT:
-SUB:
-ADD:
-SRAI:
+AND:done
+OR:done
+SRA:done
+SRL:done
+XOR:done
+SLTU:done
+SLT:done
+SUB:done
+ADD:done
+SRAI:done
 SRLI: Abdelsalam
 SLLI: Abdelsalam
 ANDI: Abdelsalam
-SW:
-SH:
-SB:
+SW:done
+SH:done
+SB:done
 LHU:
 LBU:
-LW:
-LH:
-LB:
+LW: done
+LH: done
+LB: done
 BGEU: Abdelsalam
 BLTU: Abdelsalam
 BGE: Abdelsalam
