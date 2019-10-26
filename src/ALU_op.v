@@ -27,13 +27,26 @@ always @(*) begin
     case (op_in)
         2'b00: op_out = `ALU_ADD;
         2'b01: op_out = `ALU_SUB;
+        // R Format 
         2'b10: case (inst_1)
             // if intruction30 ==1 ALU_SUB else ALU_ADD
             `F3_ADD: op_out = inst_2 ? `ALU_SUB : `ALU_ADD;
-            // if intruction30 ==1 ALU_PASS else ALU_AND
-            `F3_AND: op_out = inst_2 ? `ALU_PASS : `ALU_AND; 
-            // if intruction30 ==1 ALU_PASS else ALU_OR
-            `F3_OR: op_out = inst_2 ? `ALU_PASS : `ALU_OR; 
+            
+            `F3_AND: op_out =  `ALU_AND; 
+            
+            `F3_OR: op_out =  `ALU_OR; 
+            
+            `F3_XOR: op_out= `ALU_XOR;
+            // if instruction30==1 ALU_SRA else ALU_SRL
+            `F3_SRL: op_out = ints_2?`ALU_SRA:`ALU_SRL;
+
+            `F3_SLL: op_out= `ALU_SLL;
+
+            `F3_SLT: op_out= `ALU_SLT;
+
+            `F3_STLU:op_out= `ALU_SLTU;
+            
+
             default: op_out = `ALU_PASS; //error
         endcase
         default: op_out = `ALU_PASS; //error
