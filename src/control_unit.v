@@ -43,10 +43,10 @@ always @(*) begin
         `OPCODE_Arith_I: begin
             branch=0;
             memRead=0;
-            ALUOp=2'b01;
+            ALUOp=2'b11;
             memWrite=0;
             ALUSrc=0;
-            RegWrite=0;
+            RegWrite=1;
             end
 
          default: begin 
