@@ -49,7 +49,7 @@ always @(*) begin
 		endcase
             
  	  2'b11: case (inst_1)
-		 `F3_ADD: op_out = `ALU_ADD;
+		    `F3_ADD: op_out = `ALU_ADD;
             
             `F3_AND: op_out =  `ALU_AND; 
             

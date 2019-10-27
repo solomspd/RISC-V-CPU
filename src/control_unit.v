@@ -34,9 +34,9 @@ always @(*) begin
         `OPCODE_Branch: begin
             branch=1;
             memRead=0;
-            ALUOp=2'b10;
+            ALUOp=2'b01;
             memWrite=0;
-            ALUSrc=1;
+            ALUSrc=0;
             RegWrite=1;
             end
 
