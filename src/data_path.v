@@ -25,7 +25,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
  output [1:0]alu_op_ext, output z_flag_ext, output [31:0]alu_ctrl_out_ext, output [31:0]PC_inc_ext, output [31:0]pc_gen_out_ext, output [31:0]PC_ext, output [31:0]PC_in_ext,
  output [31:0]data_read_1_ext, output [31:0]data_read_2_ext, output [31:0]write_data_ext, output [31:0]imm_out_ext, output [31:0]shift_ext, output [31:0]alu_mux_ext
  ,output [31:0]alu_out_ext, output [31:0]data_mem_out_ext);
-        
+    wire [31:0] write_data_in;    
     wire [31:0]PC;
     assign PC_ext = PC;
     wire [31:0]PC_in;
@@ -36,7 +36,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     assign inst_out_ext = inst_out;
     InstMem inst_mem (PC >> 2, inst_out);
     
-    wire can_branch, mem_read, mem_to_reg, mem_write, alu_src, reg_write;
+    wire can_branch, mem_read, mem_to_reg, mem_write, alu_src, reg_write, pc_gen_sel;
     assign branch_ext = can_branch;
     assign mem_read_ext = mem_read;
     assign mem_to_reg_ext = mem_to_reg;
@@ -45,7 +45,8 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     assign reg_write_ext = reg_write;
     wire [1:0]alu_op;
     assign alu_op_ext = alu_op;
-    control_unit controlUnit (inst_out[`IR_opcode], can_branch, mem_read, mem_to_reg, mem_write, alu_src, reg_write, alu_op);
+    wire [1:0]rd_sel;
+    control_unit controlUnit (inst_out[`IR_opcode], can_branch, mem_read, mem_to_reg, mem_write, alu_src, reg_write, alu_op, rd_sel, pc_gen_sel);
     
     wire [31:0]write_data;
     assign write_data_ext = write_data;
@@ -53,7 +54,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     assign data_read_1_ext = read_data_1;
     wire [31:0]read_data_2;    
     assign data_read_2_ext = read_data_2;
-    RegFile reg_file (clk, rst, inst_out[`IR_rs1], inst_out[`IR_rs2], inst_out[`IR_rd], write_data, reg_write, read_data_1, read_data_2);
+    RegFile reg_file (clk, rst, inst_out[`IR_rs1], inst_out[`IR_rs2], inst_out[`IR_rd], write_data_in, reg_write, read_data_1, read_data_2);
     
     wire [31:0]imm_out;
     assign imm_out_ext = imm_out;
@@ -80,7 +81,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     assign data_mem_out_ext = data_mem_out;
     DataMem data_mem (clk, mem_read, mem_write, alu_out, inst_out[`IR_funct3] ,read_data_2, data_mem_out);
 
-    multiplexer write_back (alu_out, data_mem_out, mem_to_reg, write_data);
+   
     
     wire [31:0]shift_out;
     assign shift_ext = shift_out;
@@ -89,13 +90,21 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     wire [31:0]pc_gen_out;
     assign pc_gen_out_ext = pc_gen_out;
     wire dummy_carry;
-    ripple pc_gen (PC, imm_out, pc_gen_out, dummy_carry);
+    wire [31:0]pc_gen_in;
+    assign pc_gen_in = pc_gen_sel ? read_data_1 : PC;
+    ripple pc_gen (pc_gen_in, imm_out, pc_gen_out, dummy_carry);
+    
+    
     
     wire [31:0]pc_inc_out;
     assign PC_inc_ext = pc_inc_out;
     wire dummy_carry_2;
     ripple pc_inc (PC, 4'b100, pc_inc_out, dummy_carry_2);
     
-    multiplexer pc_mux (pc_inc_out, pc_gen_out, can_branch & should_branch, PC_in);
+    
+    multiplexer write_back (alu_out, data_mem_out, mem_to_reg, write_data);
+    assign write_data_in= (rd_sel == 2'b00) ? write_data : (rd_sel == 2'b01) ? pc_gen_out : (rd_sel == 2'b10) ? pc_inc_out : read_data_1;
+    
+    multiplexer pc_mux (pc_inc_out, pc_gen_out, (can_branch & should_branch) | (rd_sel == 2'b10) , PC_in);
 
 endmodule

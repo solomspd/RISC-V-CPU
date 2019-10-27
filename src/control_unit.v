@@ -1,6 +1,6 @@
 `include "defines.v"
 
-module control_unit(input [4:0]inst, output reg branch, memRead, memtoReg, memWrite, ALUSrc, RegWrite, output reg [1:0]ALUOp);
+module control_unit(input [4:0]inst, output reg branch, memRead, memtoReg, memWrite, ALUSrc, RegWrite, output reg [1:0]ALUOp,rd_sel, output reg pc_gen_sel);
 
 always @(*) begin
     case(inst) 
@@ -13,6 +13,8 @@ always @(*) begin
             memWrite=0;
             ALUSrc=0;
             RegWrite=1;
+            pc_gen_sel=0;
+            rd_sel=2'b00;
             end
         `OPCODE_Load: begin
             branch=0;
@@ -22,6 +24,8 @@ always @(*) begin
             memWrite=0;
             ALUSrc=1;
             RegWrite=1;
+            pc_gen_sel=0;
+            rd_sel=2'b00;
             end
         `OPCODE_Store: begin
             branch=0;
@@ -30,6 +34,8 @@ always @(*) begin
             memWrite=1;
             ALUSrc=1;
             RegWrite=0;
+            pc_gen_sel=0;
+            rd_sel=2'b00;
             end 
         `OPCODE_Branch: begin
             branch=1;
@@ -38,6 +44,8 @@ always @(*) begin
             memWrite=0;
             ALUSrc=0;
             RegWrite=1;
+            pc_gen_sel=0;
+            rd_sel=2'b00;
             end
 
         `OPCODE_Arith_I: begin
@@ -47,7 +55,50 @@ always @(*) begin
             memWrite=0;
             ALUSrc=0;
             RegWrite=1;
+            pc_gen_sel=0;
+            rd_sel=2'b00;
             end
+            
+        `OPCODE_JALR: begin
+                branch=0;
+                memRead=0;
+                ALUOp=2'b00;
+                memWrite=0;
+                ALUSrc=0;
+                RegWrite=1;
+                pc_gen_sel=1;
+                rd_sel=2'b10;
+                end 
+        `OPCODE_JAL: begin
+                branch=0;
+                memRead=0;
+                ALUOp=2'b00;
+                memWrite=0;
+                ALUSrc=0;
+                RegWrite=1;
+                pc_gen_sel=0;
+                rd_sel=2'b10;
+                end
+        `OPCODE_AUIPC: begin
+                branch=0;
+                memRead=0;
+                ALUOp=2'b00;
+                memWrite=0;
+                ALUSrc=0;
+                RegWrite=1;
+                pc_gen_sel=0;
+                rd_sel=2'b01;
+                end           
+        `OPCODE_LUI: begin
+                branch=0;
+                memRead=0;
+                ALUOp=2'b00;
+                memWrite=0;
+                ALUSrc=0;
+                RegWrite=1;
+                pc_gen_sel=0;
+                rd_sel=2'b11;
+                end                 
 
          default: begin 
             branch = 0;
@@ -57,6 +108,7 @@ always @(*) begin
             ALUSrc=0;
             RegWrite=0;
             memtoReg=0;
+            pc_gen_sel=0;
             end
                                              
     endcase
