@@ -1,3 +1,5 @@
+`include "defines.v"
+
 //`timescale 1ns / 1ps
 ////////////////////////////////////////////////////////////////////////////////////
 //// Company: 
@@ -20,25 +22,24 @@
 ////////////////////////////////////////////////////////////////////////////////////
 
 
-module U_J_Format(input [6:0] opcode, input [31:0] imm, pc, PC_Imm, mux, output reg[31:0] write_Data);
+module U_J_Format(input [4:0] opcode, input [31:0] imm, pc, PC_Imm, mux, output reg[31:0] write_Data);
 
     always@(*) begin
   
- if (opcode== 7'b0110111)  // lui
+ if (opcode== `OPCODE_LUI)  // lui
 write_Data = imm>> 12;
 
-else if (opcode== 7'b0010111)   // auipc
+else if (opcode== `OPCODE_AUIPC) // auipc
 //out = (imm>> 12)+pc;
 write_Data = PC_Imm;
 
-else if (opcode== 7'b1100111) // jal
+else if (opcode== `OPCODE_JAL) // jal
 write_Data = pc;
 
-else if (opcode== 7'b1100111) // jalr
+else if (opcode== `OPCODE_JALR) // jalr
 write_Data = pc;
 
 else 
 write_Data=mux; 
 
 end 
-endmodule
