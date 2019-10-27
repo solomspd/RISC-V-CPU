@@ -38,18 +38,18 @@ always @(*) begin
             
             `F3_XOR: op_out= `ALU_XOR;
             // if instruction30==1 ALU_SRA else ALU_SRL
-            `F3_SRL: op_out = ints_2?`ALU_SRA:`ALU_SRL;
+            `F3_SRL: op_out = inst_2?`ALU_SRA:`ALU_SRL;
 
             `F3_SLL: op_out= `ALU_SLL;
 
             `F3_SLT: op_out= `ALU_SLT;
 
-            `F3_STLU:op_out= `ALU_SLTU;
+            `F3_SLTU:op_out= `ALU_SLTU;
 		
 		endcase
             
  	  2'b11: case (inst_1)
-		 `F3_ADD: op_out = `ALU_ADD;
+		    `F3_ADD: op_out = `ALU_ADD;
             
             `F3_AND: op_out =  `ALU_AND; 
             
@@ -57,13 +57,13 @@ always @(*) begin
             
             `F3_XOR: op_out= `ALU_XOR;
             // if instruction30==1 ALU_SRA else ALU_SRL
-            `F3_SRL: op_out = ints_2?`ALU_SRA:`ALU_SRL;
+            `F3_SRL: op_out = inst_2?`ALU_SRA:`ALU_SRL;
 
             `F3_SLL: op_out= `ALU_SLL;
 
             `F3_SLT: op_out= `ALU_SLT;
 
-            `F3_STLU:op_out= `ALU_SLTU;
+            `F3_SLTU:op_out= `ALU_SLTU;
 
 
             default: op_out = `ALU_PASS; //error

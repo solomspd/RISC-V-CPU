@@ -78,8 +78,8 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     
     wire [31:0]data_mem_out;
     assign data_mem_out_ext = data_mem_out;
-    DataMem data_mem (clk, mem_read, mem_write, alu_out >> 2, read_data_2, data_mem_out);
-    
+    DataMem data_mem (clk, mem_read, mem_write, alu_out, inst_out[`IR_funct3] ,read_data_2, data_mem_out);
+
     multiplexer write_back (alu_out, data_mem_out, mem_to_reg, write_data);
     
     wire [31:0]shift_out;
@@ -89,13 +89,12 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     wire [31:0]pc_gen_out;
     assign pc_gen_out_ext = pc_gen_out;
     wire dummy_carry;
-    ripple pc_gen (PC, shift_out, pc_gen_out, dummy_carry);
+    ripple pc_gen (PC, imm_out, pc_gen_out, dummy_carry);
     
     wire [31:0]pc_inc_out;
     assign PC_inc_ext = pc_inc_out;
     wire dummy_carry_2;
     ripple pc_inc (PC, 4'b100, pc_inc_out, dummy_carry_2);
-    
     
     multiplexer pc_mux (pc_inc_out, pc_gen_out, can_branch & should_branch, PC_in);
 

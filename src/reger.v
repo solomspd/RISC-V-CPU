@@ -33,10 +33,12 @@ input clk, rst, input [4:0] readreg1, readreg2, writereg, input [31:0] writedata
         end
     endgenerate
     
-    assign readdata1 = readreg1 != 5'b0 ? out[readreg1] : 5'b0;
-    assign readdata2 = readreg2 != 5'b0 ? out[readreg2] : 5'b0;
+//    assign readdata1 = readreg1 != 5'b0 ? out[readreg1] : 5'b0;
+    assign readdata1= out[readreg1];
+    assign readdata2=out[readreg2];
+//    assign readdata2 = readreg2 != 5'b0 ? out[readreg2] : 5'b0;
         
-    assign load = regwrite ? 1'b1 << writereg : 0;
+    assign load = regwrite ? 1 << writereg : 0;
     
 endmodule
 
