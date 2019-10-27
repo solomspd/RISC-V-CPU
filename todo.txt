@@ -25,7 +25,7 @@ BGE: Abdelsalam
 BLT: Abdelsalam
 BNE: Abdelsalam
 BEQ: Abdelsalam
-JALR:
-JAL:
-AUIPC:
-LUI:
+JALR:done
+JAL:done
+AUIPC:done
+LUI:done
