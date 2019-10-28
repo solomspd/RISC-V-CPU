@@ -1,0 +1,45 @@
+
+main:
+addi s1,s1,1 # s1=1
+andi s1,s1,1 # andi 1&1 ->s1=1
+ori s1,s1,1  # s1 or 1 -->s1=1
+xori s2,s1,0 #xori 1^0 ->s2=1
+slti s2,s1,0 # 1<0 -> s2=0
+addi s3,s1,-5# s3 = -4
+sltiu s2,s3,0 # -4<0--> s2=1 
+slli s2,s2,1 # s2=2
+srli s2,s2,1 # s2=1
+srai s3,s3,1 
+xor s3,s3,s3 # set s3 =0
+addi s3,s3,-5 # set s3=5
+lui s4,-1 # s4= upper 20 are ones 
+
+
+beq s1, s1, BranchtoNOTequal #s1==s1 branch to not equal 
+addi s5,s5 ,-10 # gets skipped set s5=-10 
+
+BranchtoNOTequal:
+bne s1, s3, BranchtoGreaterthan #1!=-5
+addi s5,s5 ,-10 # gets skipped set s5=-10 
+
+BranchtoGreaterthan:
+bge s1, s3, BranchtoLessthan #1>-5 
+addi s5,s5 ,-10 # gets skipped set s5=-10 
+
+
+BranchtoLessthan: 
+blt s3, s1, BranchtolessthanUnsigned #-5<1
+addi s5,s5 ,-10 # gets skipped set s5=-10 
+
+BranchtolessthanUnsigned: 
+bltu s1, s3, BranchtogreaterthanUnsigned #1<5 
+addi s5,s5 ,-10 # gets skipped set s5=-10 
+
+BranchtogreaterthanUnsigned: bgeu s3, s1, BranchtoJAL #5>1
+addi s5,s5 ,-10 # gets skipped set s5=-10 
+
+BranchtoJAL: jal s1,Jumptoauipc
+addi s5,s5 ,-10 # gets skipped set s5=-10 
+
+Jumptoauipc: auipc s1,100
+	
