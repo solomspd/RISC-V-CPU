@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 /*******************************************************************
 *
-* Module: register.v
+* Module: mux.v
 * Project: RISC-V FPGA Implementation and Testing 
 * Author: 
 * Ahmed Ibrahim  ahmeddibrahim@aucegypt.edu
