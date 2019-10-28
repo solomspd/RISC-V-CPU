@@ -6,3 +6,5 @@
 *Rinal Mohamed
 
 This working implementation includes all RV32I instructions except for CRS and FENCE instructions.
+
+We assume instruction and data memory are both byte addressable and are independent of each other. Both are 4Kbytes big.
