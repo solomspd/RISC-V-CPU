@@ -1,23 +1,24 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 10/01/2019 03:02:58 PM
-// Design Name: 
-// Module Name: data_path
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
+/*******************************************************************
+*
+* Module: register.v
+* Project: RISC-V FPGA Implementation and Testing 
+* Author: 
+* Ahmed Ibrahim  ahmeddibrahim@aucegypt.edu
+* Abd El-Salam   solomspd@aucegypt.edu
+* Andrew Kamal   andrewk.kamal@aucegypt.edu
+* Rinal Mohamed  rinalmohamed@aucegypt.edu
+* Description: This module is the core of our implememntaion is it the "top"
+*
+* Change history: 09/17/2019 03:07:59 PM - Module created by Abd *El-Salam in the lab
+* 17/9/19 - created by Abdelsalam in the lab
+* 31/9/19 - adapted datapath to ALU and immediate modules provided by project material. Elaborated and implemented shift module as outlined in provided ALU
+* 32/9/19 - fixed zero flag. anded and fixe brnch module
+* 26/10/19 - modified control signals according to new control signals.
+* 28/10/19 - polish. added jump muxes. lots of bug fixes.
+* 29/10/19 - added muxes for break and call. bug fixes.
+*
+**********************************************************************/
 
 `include "defines.v"
 
