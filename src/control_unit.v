@@ -35,11 +35,13 @@ always @(*) begin
             ALUSrc=1;
             RegWrite=0;
             pc_gen_sel=0;
+            memtoReg=1;
             rd_sel=2'b00;
             end 
         `OPCODE_Branch: begin
             branch=1;
             memRead=0;
+            memtoReg=0;
             ALUOp=2'b01;
             memWrite=0;
             ALUSrc=0;
@@ -53,9 +55,10 @@ always @(*) begin
             memRead=0;
             ALUOp=2'b11;
             memWrite=0;
-            ALUSrc=0;
+            ALUSrc=1;
             RegWrite=1;
             pc_gen_sel=0;
+            memtoReg=0;
             rd_sel=2'b00;
             end
             
@@ -67,6 +70,7 @@ always @(*) begin
                 ALUSrc=0;
                 RegWrite=1;
                 pc_gen_sel=1;
+                memtoReg=0;
                 rd_sel=2'b10;
                 end 
         `OPCODE_JAL: begin
@@ -77,6 +81,7 @@ always @(*) begin
                 ALUSrc=0;
                 RegWrite=1;
                 pc_gen_sel=0;
+                memtoReg=0;
                 rd_sel=2'b10;
                 end
         `OPCODE_AUIPC: begin
@@ -87,6 +92,7 @@ always @(*) begin
                 ALUSrc=0;
                 RegWrite=1;
                 pc_gen_sel=0;
+                memtoReg=0;
                 rd_sel=2'b01;
                 end           
         `OPCODE_LUI: begin
@@ -97,6 +103,7 @@ always @(*) begin
                 ALUSrc=0;
                 RegWrite=1;
                 pc_gen_sel=0;
+                memtoReg=0;
                 rd_sel=2'b11;
                 end                 
 

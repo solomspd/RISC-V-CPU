@@ -27,14 +27,15 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
  ,output [31:0]alu_out_ext, output [31:0]data_mem_out_ext);
     wire [31:0] write_data_in;    
     wire [31:0]PC;
+    wire [31:0]new_PC_in;
     assign PC_ext = PC;
     wire [31:0]PC_in;
     assign PC_in_ext = PC_in;
-    register program_counter (clk, PC_in, rst, 1'b1, PC);
+    register program_counter (clk, new_PC_in, rst, 1'b1, PC);
     
     wire [31:0]inst_out;
     assign inst_out_ext = inst_out;
-    InstMem inst_mem (PC >> 2, inst_out);
+    InstMem inst_mem (PC, inst_out);
     
     wire can_branch, mem_read, mem_to_reg, mem_write, alu_src, reg_write, pc_gen_sel;
     assign branch_ext = can_branch;
@@ -49,12 +50,14 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     control_unit controlUnit (inst_out[`IR_opcode], can_branch, mem_read, mem_to_reg, mem_write, alu_src, reg_write, alu_op, rd_sel, pc_gen_sel);
     
     wire [31:0]write_data;
-    assign write_data_ext = write_data;
+      assign write_data_ext = write_data_in;
     wire [31:0]read_data_1;
     assign data_read_1_ext = read_data_1;
     wire [31:0]read_data_2;    
     assign data_read_2_ext = read_data_2;
     RegFile reg_file (clk, rst, inst_out[`IR_rs1], inst_out[`IR_rs2], inst_out[`IR_rd], write_data_in, reg_write, read_data_1, read_data_2);
+    
+  
     
     wire [31:0]imm_out;
     assign imm_out_ext = imm_out;
@@ -75,7 +78,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     prv32_ALU alu (read_data_1, alu_mux_out, imm_out[4:0], alu_out, carry_flag, zero_flag, over_flag, sign_flag, alu_ctrl_out);
 
     wire should_branch;
-    branch branch_mod (inst_out[30:14], zero_flag, carry_flag, over_flag, sign_flag, should_branch);
+    branch branch_mod (inst_out[`IR_funct3], zero_flag, carry_flag, over_flag, sign_flag, should_branch);
     
     wire [31:0]data_mem_out;
     assign data_mem_out_ext = data_mem_out;
@@ -103,8 +106,14 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     
     
     multiplexer write_back (alu_out, data_mem_out, mem_to_reg, write_data);
-    assign write_data_in= (rd_sel == 2'b00) ? write_data : (rd_sel == 2'b01) ? pc_gen_out : (rd_sel == 2'b10) ? pc_inc_out : read_data_1;
     
-    multiplexer pc_mux (pc_inc_out, pc_gen_out, (can_branch & should_branch) | (rd_sel == 2'b10) , PC_in);
+    mux4x1 write_data_mux (write_data, pc_gen_out, pc_inc_out, read_data_1, rd_sel, write_data_in);
+    
+//    assign write_data_in = (rd_sel == 2'b00) ? write_data : (rd_sel == 2'b01) ? pc_gen_out : (rd_sel == 2'b10) ? pc_inc_out : read_data_1;
+    
+    multiplexer pc_mux (pc_inc_out, pc_gen_out, (can_branch & should_branch) , PC_in);
+
+    assign new_PC_in = pc_gen_sel ? PC_in >> 2 : PC_in;     
+//    assign pc_in = pc_gen_sel ? pc_gen_out >> 2 : pc_inc_out;
 
 endmodule
