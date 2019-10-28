@@ -1,23 +1,19 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 09/29/2019 04:25:18 PM
-// Design Name: 
-// Module Name: ALU_op
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
+*******************************************************************
+*
+* Module: ALU_op.v
+* Project: RISC-V FPGA Implementation and Testing 
+* Author: 
+* Ahmed Ibrahim  ahmeddibrahim@aucegypt.edu
+* Abd El-Salam   solomspd@aucegypt.edu
+* Andrew Kamal   andrewk.kamal@aucegypt.edu
+* Rinal Mohamed  rinalmohamed@aucegypt.edu
+* Description: This module was created to control the ALU module *by basically giving a code to each operation that will later be *passed to the ALU to handle the operation accordingly
+*
+* Change history: 09/17/2019 03:07:59 PM - Module created by Abd *El-Salam in the lab
+*25/10/2019 - Module modified to abide by the defines that were *uploaded to the project
+*All the operations were given a code that will be used in the *ALU
+**********************************************************************/
 
 `include "defines.v"
 module ALU_op(input [1:0]op_in, input [2:0]inst_1, input inst_2, output reg [3:0]op_out);

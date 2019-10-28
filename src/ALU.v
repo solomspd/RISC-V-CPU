@@ -1,23 +1,20 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 09/24/2019 03:31:49 PM
-// Design Name: 
-// Module Name: ALU
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
+/*******************************************************************
+*
+* Module: ALU.v
+* Project: RISC-V FPGA Implementation and Testing 
+* Author: 
+* Ahmed Ibrahim  ahmeddibrahim@aucegypt.edu
+* Abd El-Salam   solomspd@aucegypt.edu
+* Andrew Kamal   andrewk.kamal@aucegypt.edu
+* Rinal Mohamed  rinalmohamed@aucegypt.edu
+* Description: This module creates the ALU that will handle all *the executions that need to be processed in the processor just *as add, sub, xor, or any other operation that needs handling. *This module is responsible for all the operations 
+*
+* Change history: 09/17/2019 03:07:59 PM - Module created by Abd *El-Salam in the lab
+* 25/10/2019 - Module modified accodring to the defines that were *uploaded by the professor. 
+* All the operations were added and handled accordingly in the *ALU control unit
+
+**********************************************************************/
 
 `include "defines.v"
 module prv32_ALU(
