@@ -28,16 +28,18 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     wire [31:0] write_data_in;    
     wire [31:0]PC;
     wire [31:0]new_PC_in;
+    wire [31:0] final_pc;
+
     assign PC_ext = PC;
     wire [31:0]PC_in;
     assign PC_in_ext = PC_in;
-    register program_counter (clk, new_PC_in, rst, 1'b1, PC);
+    register program_counter (clk, final_pc, rst, 1'b1, PC);
     
     wire [31:0]inst_out;
     assign inst_out_ext = inst_out;
     InstMem inst_mem (PC, inst_out);
     
-    wire can_branch, mem_read, mem_to_reg, mem_write, alu_src, reg_write, pc_gen_sel;
+    wire can_branch, mem_read, mem_to_reg, mem_write, alu_src, reg_write, pc_gen_sel, sys;
     assign branch_ext = can_branch;
     assign mem_read_ext = mem_read;
     assign mem_to_reg_ext = mem_to_reg;
@@ -47,7 +49,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     wire [1:0]alu_op;
     assign alu_op_ext = alu_op;
     wire [1:0]rd_sel;
-    control_unit controlUnit (inst_out[`IR_opcode], can_branch, mem_read, mem_to_reg, mem_write, alu_src, reg_write, alu_op, rd_sel, pc_gen_sel);
+    control_unit controlUnit (inst_out[`IR_opcode], can_branch, mem_read, mem_to_reg, mem_write, alu_src, reg_write,sys, alu_op, rd_sel, pc_gen_sel);
     
     wire [31:0]write_data;
       assign write_data_ext = write_data_in;
@@ -113,7 +115,8 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     
     multiplexer pc_mux (pc_inc_out, pc_gen_out, (can_branch & should_branch) , PC_in);
 
-    assign new_PC_in = pc_gen_sel ? PC_in >> 2 : PC_in;     
+    assign new_PC_in = pc_gen_sel ? PC_in >> 2 : PC_in;  
+    assign final_pc = (sys&inst_out[20])? PC:new_PC_in;
 //    assign pc_in = pc_gen_sel ? pc_gen_out >> 2 : pc_inc_out;
 
 endmodule

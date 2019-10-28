@@ -1,6 +1,6 @@
 `include "defines.v"
 
-module control_unit(input [4:0]inst, output reg branch, memRead, memtoReg, memWrite, ALUSrc, RegWrite, output reg [1:0]ALUOp,rd_sel, output reg pc_gen_sel);
+module control_unit(input [4:0]inst, output reg branch, memRead, memtoReg, memWrite, ALUSrc, RegWrite, sys, output reg [1:0]ALUOp,rd_sel, output reg pc_gen_sel);
 
 always @(*) begin
     case(inst) 
@@ -15,6 +15,7 @@ always @(*) begin
             RegWrite=1;
             pc_gen_sel=0;
             rd_sel=2'b00;
+            sys=0;
             end
         `OPCODE_Load: begin
             branch=0;
@@ -26,6 +27,7 @@ always @(*) begin
             RegWrite=1;
             pc_gen_sel=0;
             rd_sel=2'b00;
+            sys=0;
             end
         `OPCODE_Store: begin
             branch=0;
@@ -37,6 +39,7 @@ always @(*) begin
             pc_gen_sel=0;
             memtoReg=1;
             rd_sel=2'b00;
+            sys=0;
             end 
         `OPCODE_Branch: begin
             branch=1;
@@ -48,6 +51,7 @@ always @(*) begin
             RegWrite=1;
             pc_gen_sel=0;
             rd_sel=2'b00;
+            sys=0;
             end
 
         `OPCODE_Arith_I: begin
@@ -60,6 +64,7 @@ always @(*) begin
             pc_gen_sel=0;
             memtoReg=0;
             rd_sel=2'b00;
+            sys=0;
             end
             
         `OPCODE_JALR: begin
@@ -72,6 +77,7 @@ always @(*) begin
                 pc_gen_sel=1;
                 memtoReg=0;
                 rd_sel=2'b10;
+                sys=0;
                 end 
         `OPCODE_JAL: begin
                 branch=0;
@@ -83,6 +89,7 @@ always @(*) begin
                 pc_gen_sel=0;
                 memtoReg=0;
                 rd_sel=2'b10;
+                sys=0;
                 end
         `OPCODE_AUIPC: begin
                 branch=0;
@@ -94,6 +101,7 @@ always @(*) begin
                 pc_gen_sel=0;
                 memtoReg=0;
                 rd_sel=2'b01;
+                sys=0;
                 end           
         `OPCODE_LUI: begin
                 branch=0;
@@ -105,7 +113,21 @@ always @(*) begin
                 pc_gen_sel=0;
                 memtoReg=0;
                 rd_sel=2'b11;
-                end                 
+                sys=0;
+                end 
+
+        `OPCODE_SYSTEM: begin
+                branch=0;
+                memRead=0;
+                ALUOp=2'b00;
+                memWrite=0;
+                ALUSrc=0;
+                RegWrite=0;
+                pc_gen_sel=0;
+                memtoReg=0;
+                rd_sel=2'b00;
+                sys=1;
+                end                                 
 
          default: begin 
             branch = 0;
