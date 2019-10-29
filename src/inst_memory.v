@@ -1,23 +1,19 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 10/01/2019 02:22:39 PM
-// Design Name: 
-// Module Name: inst_memory
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
+/*******************************************************************
+*
+* Module: register.v
+* Project: RISC-V FPGA Implementation and Testing 
+* Author: 
+* Ahmed Ibrahim  ahmeddibrahim@aucegypt.edu
+* Abd El-Salam   solomspd@aucegypt.edu
+* Andrew Kamal   andrewk.kamal@aucegypt.edu
+* Rinal Mohamed  rinalmohamed@aucegypt.edu
+* Description: this module stores instructions that will be executed.
+*
+* Change history: 09/17/2019 03:07:59 PM - Module created by Abd *El-Salam in the lab
+* 29/10/2019 - made memory byte addressable and can now input from file
+*
+**********************************************************************/
 
 
 module InstMem (input [5:0] addr, output [31:0] data_out);

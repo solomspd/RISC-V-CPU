@@ -8,7 +8,7 @@
 * Abd El-Salam   solomspd@aucegypt.edu
 * Andrew Kamal   andrewk.kamal@aucegypt.edu
 * Rinal Mohamed  rinalmohamed@aucegypt.edu
-* Description: This module is the core of our implememntaion is it the "top"
+* Description: This module is the core of our implememntaion is it the "top" module that conects everything together
 *
 * Change history: 09/17/2019 03:07:59 PM - Module created by Abd *El-Salam in the lab
 * 17/9/19 - created by Abdelsalam in the lab

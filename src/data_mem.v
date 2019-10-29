@@ -8,7 +8,7 @@
 * Abd El-Salam   solomspd@aucegypt.edu
 * Andrew Kamal   andrewk.kamal@aucegypt.edu
 * Rinal Mohamed  rinalmohamed@aucegypt.edu
-* Description: This module just creates one instance of a *register to be used later in the registers file module to create *the 32 registers required for the processor
+* Description: the main data memeroy of the processor. stores values to load and save
 *
 * Change history: 09/17/2019 03:07:59 PM - Module created by Abd *El-Salam in the lab
 * 26/10/19 - made memory byte addressable and added all instructions (sb,lb, etc..) 
