@@ -1,23 +1,19 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 09/17/2019 04:16:17 PM
-// Design Name: 
-// Module Name: imm_gen
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
+/*******************************************************************
+*
+* Module: imm_gen.v
+* Project: RISC-V FPGA Implementation and Testing 
+* Author: 
+* Ahmed Ibrahim  ahmeddibrahim@aucegypt.edu
+* Abd El-Salam   solomspd@aucegypt.edu
+* Andrew Kamal   andrewk.kamal@aucegypt.edu
+* Rinal Mohamed  rinalmohamed@aucegypt.edu
+* Description: This module was created and adapted it to required *modules
+*
+* Change history: 24/10/2019 - Module created and adapted it to *required modifications that will make it compatible with the *defines and recognizable across all other units
+
+**********************************************************************/
+
 
 
 `include "defines.v"
