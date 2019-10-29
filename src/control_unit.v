@@ -1,5 +1,23 @@
 `include "defines.v"
 
+/*******************************************************************
+*
+* Module: control_unit.v
+* Project: RISC-V FPGA Implementation and Testing 
+* Author: 
+* Ahmed Ibrahim  ahmeddibrahim@aucegypt.edu
+* Abd El-Salam   solomspd@aucegypt.edu
+* Andrew Kamal   andrewk.kamal@aucegypt.edu
+* Rinal Mohamed  rinalmohamed@aucegypt.edu
+* Description: This module was created to cascade control signals *to all of the other units in the data path to instruct them how *they will behave in all of the instructions 
+*
+* Change history: 24/10/2019 - Module created and adapted it to *required modules
+*26/10/2019 - control unit updated according to the new *instructions that were added
+*27/10/2019 - control unit updated for other new instructions
+
+**********************************************************************/
+
+
 module control_unit(input [4:0]inst, output reg branch, memRead, memtoReg, memWrite, ALUSrc, RegWrite, sys, output reg [1:0]ALUOp,rd_sel, output reg pc_gen_sel);
 
 always @(*) begin
