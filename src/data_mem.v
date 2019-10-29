@@ -12,7 +12,7 @@
 *
 * Change history: 09/17/2019 03:07:59 PM - Module created by Abd *El-Salam in the lab
 * 26/10/19 - made memory byte addressable and added all instructions (sb,lb, etc..) 
-* 29/10/19 - made memory 4k bytes big
+* 29/10/19 - made memory 4k bytes big. now input memeory from file
 *
 **********************************************************************/
 
