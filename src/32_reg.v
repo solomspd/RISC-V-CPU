@@ -16,12 +16,12 @@
 *
 **********************************************************************/
 
-module register(input clk, input [31:0]in, input rst, input load, output [31:0]out);
+module register #(parameter n = 32) (input clk, input [n-1:0]in, input rst, input load, output [n-1:0]out);
     
-    wire [31:0]muxer;
+    wire [n-1:0]muxer;
     genvar i;
     generate
-        for (i = 0; i < 32; i = i + 1) begin
+        for (i = 0; i < n; i = i + 1) begin
             DFlipFlop flip(clk, rst, muxer[i], out[i]);
             mux muxie(out[i], in[i], load, muxer[i]);
         end 

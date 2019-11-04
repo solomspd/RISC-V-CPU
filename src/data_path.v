@@ -110,14 +110,14 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     
     multiplexer write_back (alu_out, data_mem_out, mem_to_reg, write_data);
     
-    mux4x1 write_data_mux (write_data, pc_gen_out, pc_inc_out, read_data_1, rd_sel, write_data_in);
+//    mux4x1 write_data_mux (write_data, pc_gen_out, pc_inc_out, read_data_1, rd_sel, write_data_in);
     
-//    assign write_data_in = (rd_sel == 2'b00) ? write_data : (rd_sel == 2'b01) ? pc_gen_out : (rd_sel == 2'b10) ? pc_inc_out : read_data_1;
+    assign write_data_in = (rd_sel == 2'b00) ? write_data : (rd_sel == 2'b01) ? pc_gen_out : (rd_sel == 2'b10) ? pc_inc_out : read_data_1;
     
     multiplexer pc_mux (pc_inc_out, pc_gen_out, (can_branch & should_branch) , PC_in);
 
     assign new_PC_in = pc_gen_sel ? PC_in >> 2 : PC_in;  
-    assign final_pc = (sys&inst_out[20])? PC:new_PC_in;
+    assign final_pc = (sys & inst_out[20])? PC : new_PC_in;
 //    assign pc_in = pc_gen_sel ? pc_gen_out >> 2 : pc_inc_out;
 
 endmodule
