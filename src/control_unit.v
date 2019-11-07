@@ -18,7 +18,7 @@
 **********************************************************************/
 
 
-module control_unit(input [4:0]inst, output reg branch, memRead, memtoReg, memWrite, ALUSrc, RegWrite, sys, output reg [1:0]ALUOp,rd_sel, output reg pc_gen_sel);
+module control_unit(input [6:0]inst, output reg branch, memRead, memtoReg, memWrite, ALUSrc, RegWrite, sys, output reg [1:0]ALUOp,rd_sel, output reg pc_gen_sel);
 
 always @(*) begin
     case(inst) 

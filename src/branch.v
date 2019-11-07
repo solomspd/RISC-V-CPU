@@ -15,7 +15,7 @@
 **********************************************************************/
 
 
-module branch (input [2:0]func3, input zero, input carry, input overflow, input sign, output reg out);
+module branch (input [2:0]func3, input carry, input zero, input overflow, input sign, output reg out);
 
 always @(*) begin
     case (func3)
