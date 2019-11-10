@@ -16,7 +16,7 @@
 **********************************************************************/
 
 
-module InstMem (input [5:0] addr, output [31:0] data_out);
+module InstMem (input [31:0] addr, output [31:0] data_out);
     reg [7:0] mem [(4*1024-1):0];
     
      assign data_out = {mem[addr+3], mem[addr+2], mem[addr+1], mem[addr]};    

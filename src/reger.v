@@ -79,7 +79,7 @@ input clk, rst, input [4:0] readreg1, readreg2, writereg, input [31:0] writedata
     assign readdata2 = out[readreg2];
 //    assign readdata2 = readreg2 != 5'b0 ? out[readreg2] : 5'b0;
         
-    assign load = regwrite & writereg ? 1 << writereg : 0;
+    assign load = regwrite && writereg ? 1 << writereg : 0;
     
 endmodule
 

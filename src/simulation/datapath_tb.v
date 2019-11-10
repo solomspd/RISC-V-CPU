@@ -16,7 +16,7 @@ reg clk, rst; wire [31:0]inst_out_ext; wire branch_ext, mem_read_ext, mem_to_reg
  end
  initial begin
  rst=1;
- #50
+ #20
  rst=0;
 
  end

@@ -26,7 +26,6 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
  ,output [31:0]alu_out_ext, output [31:0]data_mem_out_ext);
  
     wire [31:0] jump_mux; 
-    wire [31:0] write_data_in;    
     wire [31:0]PC;
     wire [31:0]new_PC_in;
     wire [31:0] final_pc;
@@ -136,7 +135,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     
     register #(74) MEM_WB (clk,
     {
-    EX_MEM_Ctrl[7:6],
+    EX_MEM_Ctrl[8:7],
     EX_MEM_Ctrl[2:0],
     data_mem_out,
     EX_MEM_ALU_out,
@@ -157,7 +156,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     
     
     assign inst_out_ext = inst_out;
-    InstMem inst_mem (PC[5:0], inst_out);
+    InstMem inst_mem (PC, inst_out);
     
     
     assign branch_ext = can_branch;
@@ -169,16 +168,16 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     
     assign alu_op_ext = alu_op;
    
-    control_unit controlUnit (IF_ID_Inst[6:0], can_branch, mem_read, mem_to_reg, mem_write, alu_src, reg_write,sys, alu_op, rd_sel, pc_gen_sel);
+    control_unit controlUnit (IF_ID_Inst[6:2], can_branch, mem_read, mem_to_reg, mem_write, alu_src, reg_write,sys, alu_op, rd_sel, pc_gen_sel);
     
     
-    assign write_data_ext = write_data_in;
+    assign write_data_ext = write_data;
     
     assign data_read_1_ext = read_data_1;
        
     assign data_read_2_ext = read_data_2;
     RegFile reg_file (clk, rst, IF_ID_Inst[`IR_rs1],IF_ID_Inst[`IR_rs2], MEM_WB_Rd,
-     write_data_in, MEM_WB_Ctrl[4], read_data_1, read_data_2);
+     write_data, MEM_WB_Ctrl[4], read_data_1, read_data_2);
     
   
     
@@ -205,7 +204,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     
     
     assign data_mem_out_ext = data_mem_out;
-    DataMem data_mem (clk, EX_MEM_Ctrl[5], EX_MEM_Ctrl[4], EX_MEM_ALU_out[7:2], EX_MEM_func ,EX_MEM_RegR2, data_mem_out);
+    DataMem data_mem (clk, EX_MEM_Ctrl[5], EX_MEM_Ctrl[4], EX_MEM_ALU_out[5:0], EX_MEM_func ,EX_MEM_RegR2, data_mem_out);
    
     
     
@@ -228,9 +227,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     
     
     multiplexer write_back (MEM_WB_ALU_out, MEM_WB_Mem_out, MEM_WB_Ctrl[3], write_data);
-    
-//    mux4x1 write_data_mux (write_data, pc_gen_out, pc_inc_out, read_data_1, rd_sel, write_data_in);
-    
+        
     
     assign jump_mux = (ID_EX_Ctrl[1:0] == 2'b00) ? alu_out : (ID_EX_Ctrl[1:0] == 2'b01) ? pc_gen_out : (ID_EX_Ctrl[1:0] == 2'b10) ? (ID_EX_PC + 4) : ID_EX_RegR2;
     //
