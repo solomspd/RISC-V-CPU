@@ -116,7 +116,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     over_flag,
     sign_flag,
     jump_mux,
-    ID_EX_Func[2:0],
+    ID_EX_Func[3:1],
     ID_EX_RegR2,
     ID_EX_Rd
     },
@@ -205,7 +205,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     
     
     assign data_mem_out_ext = data_mem_out;
-    DataMem data_mem (clk, EX_MEM_Ctrl[4],EX_MEM_Ctrl[5], EX_MEM_ALU_out[7:2], EX_MEM_func ,EX_MEM_RegR2, data_mem_out);
+    DataMem data_mem (clk, EX_MEM_Ctrl[5], EX_MEM_Ctrl[4], EX_MEM_ALU_out[7:2], EX_MEM_func ,EX_MEM_RegR2, data_mem_out);
    
     
     
