@@ -71,7 +71,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     register #(159) ID_EX (clk,
     {reg_write,
     mem_to_reg,
-    should_branch,
+    can_branch,
     mem_read,
     mem_write,
     alu_op,
@@ -216,7 +216,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     // shouldn't be ID_EX_RegR1. PG
     assign pc_gen_in = EX_MEM_Ctrl[3] ?   ID_EX_RegR1: EX_MEM_BranchAddOut;
     // should be pc_gen_in instead of EX_MEM_BranchAddOut. PB
-    ripple pc_gen (EX_MEM_BranchAddOut, ID_EX_Imm, pc_gen_out, dummy_carry);
+    ripple pc_gen (ID_EX_PC, ID_EX_Imm, pc_gen_out, dummy_carry);
     
     
     
@@ -233,7 +233,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     //
     // WE STOPPED HERE TO BE CONTINUED......
     
-    multiplexer pc_mux (pc_inc_out, pc_gen_out, (can_branch & should_branch) , PC_in);
+    multiplexer pc_mux (pc_inc_out, EX_MEM_BranchAddOut, (EX_MEM_Ctrl[6] & should_branch) , PC_in);
     assign new_PC_in = pc_gen_sel ? PC_in >> 2 : PC_in;  
     assign final_pc = (MEM_WB_Ctrl[2] & inst_out[20])? PC : new_PC_in;
 //    assign pc_in = pc_gen_sel ? pc_gen_out >> 2 : pc_inc_out;
