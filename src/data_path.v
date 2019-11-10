@@ -116,7 +116,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     over_flag,
     sign_flag,
     jump_mux,
-    ID_EX_Func[3:1],
+    ID_EX_Func[2:0],
     ID_EX_RegR2,
     ID_EX_Rd
     },
