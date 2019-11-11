@@ -165,7 +165,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     wire final_mem_read;
     wire final_mem_write;
     wire [2:0]final_mem_func;
-    assign mem_addr = ~clk ? PC : EX_MEM_ALU_out[5:0];
+    assign mem_addr = ~clk ? PC : EX_MEM_ALU_out[5:0] + 6'd44;
     assign final_mem_read = ~clk ? 1'b1 : EX_MEM_Ctrl[5];
     assign final_mem_write = ~clk ? 1'b0 : EX_MEM_Ctrl[4];    
     assign final_mem_func = ~clk ? 3'b010 : EX_MEM_func;
@@ -176,6 +176,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     assign inst_out = ~clk ? mem_out : 32'h00_00_00_33;
     assign data_mem_out = ~clk ? mem_out : 1'b1;
 //    clk, EX_MEM_Ctrl[5], EX_MEM_Ctrl[4], EX_MEM_ALU_out[5:0], EX_MEM_func ,EX_MEM_RegR2, data_mem_out
+    
     
     
     assign branch_ext = can_branch;
