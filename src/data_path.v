@@ -50,6 +50,9 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     wire [31:0]pc_gen_in;
     wire [31:0]pc_inc_out;
     wire dummy_carry_2;
+	wire [1:0] forwardA, forwardB;
+	wire [31:0] inputA, inputB; 
+
     
     
 // wires declarations for the pipelined implementation 
@@ -197,7 +200,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     
     assign alu_out_ext = alu_out;
     
-    prv32_ALU alu (ID_EX_RegR1 , alu_mux_out, imm_out[4:0], alu_out, carry_flag, zero_flag, over_flag, sign_flag, alu_ctrl_out);
+    prv32_ALU alu (inputA, inputB, imm_out[4:0], alu_out, carry_flag, zero_flag, over_flag, sign_flag, alu_ctrl_out);
 
     
     branch branch_mod (ID_EX_Func[2:0] , EX_MEM_branch[3], EX_MEM_branch[2], EX_MEM_branch[1], EX_MEM_branch[0], should_branch);
@@ -228,7 +231,23 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     
     multiplexer write_back (MEM_WB_ALU_out, MEM_WB_Mem_out, MEM_WB_Ctrl[3], write_data);
         
-    
+    // forwarding unit will be added here 
+// FU(input [4:0]rs1,input [4:0]rs2,input [4:0]rdMEM, input //[4:0]rdWB,input RWMEM,input RWWB,output reg [1:0]rs1s, output //reg [1:0]rs2s);
+
+
+
+
+FU forward_unit (ID_EX_Rs1,ID_EX_Rs2, EX_MEM_RegisterRd, MEM_WB_RegisterRd, EX_MEM_RegWrite, MEM_WB_RegWrite, forwardA, forwardB);
+
+assign inputA= (forwardA==2'b10)? EX_MEM_ALU_out : (forwardA== 2'b01)? write_data: ID_EX_RegR1;
+
+
+assign inputB= (forwardB==2'b10)? EX_MEM_ALU_out : (forwardB== 2'b01)? write_data: ID_EX_RegR2;
+
+
+
+
+
     assign jump_mux = (ID_EX_Ctrl[1:0] == 2'b00) ? alu_out : (ID_EX_Ctrl[1:0] == 2'b01) ? pc_gen_out : (ID_EX_Ctrl[1:0] == 2'b10) ? (ID_EX_PC + 4) : ID_EX_RegR2;
     //
     // WE STOPPED HERE TO BE CONTINUED......
