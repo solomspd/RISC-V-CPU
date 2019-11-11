@@ -52,6 +52,9 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     wire [31:0]pc_gen_in;
     wire [31:0]pc_inc_out;
     wire dummy_carry_2;
+	wire [1:0] forwardA, forwardB;
+	wire [31:0] inputA, inputB; 
+
     
     
     
@@ -202,7 +205,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     
     
     assign alu_mux_ext = alu_mux_out;
-    multiplexer alu_mux (ID_EX_RegR2, ID_EX_Imm, ID_EX_Ctrl[4], alu_mux_out);
+    multiplexer alu_mux (inputB, ID_EX_Imm, ID_EX_Ctrl[4], alu_mux_out);
     
    
     assign alu_ctrl_out_ext = alu_ctrl_out;
@@ -213,7 +216,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     
     assign alu_out_ext = alu_out;
     
-    prv32_ALU alu (ID_EX_RegR1 , alu_mux_out, imm_out[4:0], alu_out, carry_flag, zero_flag, over_flag, sign_flag, alu_ctrl_out);
+    prv32_ALU alu (inputA, alu_mux_out, imm_out[4:0], alu_out, carry_flag, zero_flag, over_flag, sign_flag, alu_ctrl_out);
 
     
     branch branch_mod (ID_EX_Func[2:0] , EX_MEM_branch[3], EX_MEM_branch[2], EX_MEM_branch[1], EX_MEM_branch[0], should_branch);
@@ -242,7 +245,24 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     
     multiplexer write_back (MEM_WB_ALU_out, MEM_WB_Mem_out, MEM_WB_Ctrl[3], write_data);
         
-    
+    // forwarding unit will be added here 
+//Forward_Unit(
+//input EX_MEM_RegWrite, MEM_WB_RegWrite,
+//input [4:0 ]EX_MEM_RegisterRd, ID_EX_RegisterRs1,ID_EX_RegisterRs2,MEM_WB_RegisterRd,
+//output reg [1:0] forwardA, forwardB
+//    );
+
+Forward_Unit FU (EX_MEM_Ctrl[8],MEM_WB_Ctrl[4],EX_MEM_Rd,ID_EX_Rs1,ID_EX_Rs2,MEM_WB_Rd,forwardA, forwardB);
+
+assign inputA= (forwardA==2'b10)? EX_MEM_ALU_out : (forwardA== 2'b01)? write_data: ID_EX_RegR1;
+
+
+assign inputB= (forwardB==2'b10)? EX_MEM_ALU_out : (forwardB== 2'b01)? write_data: ID_EX_RegR2;
+
+
+
+
+
     assign jump_mux = (ID_EX_Ctrl[1:0] == 2'b00) ? alu_out : (ID_EX_Ctrl[1:0] == 2'b01) ? pc_gen_out : (ID_EX_Ctrl[1:0] == 2'b10) ? (ID_EX_PC + 4) : ID_EX_RegR2;
     
     multiplexer pc_mux (pc_inc_out, EX_MEM_BranchAddOut, (EX_MEM_Ctrl[6] & should_branch) , PC_in);
