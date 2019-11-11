@@ -25,6 +25,8 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
  output [31:0]data_read_1_ext, output [31:0]data_read_2_ext, output [31:0]write_data_ext, output [31:0]imm_out_ext, output [31:0]shift_ext, output [31:0]alu_mux_ext
  ,output [31:0]alu_out_ext, output [31:0]data_mem_out_ext);
  
+    wire neg_clk = ~clk;
+
     wire [31:0] jump_mux; 
     wire [31:0]PC;
     wire [31:0]new_PC_in;
@@ -52,6 +54,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     wire dummy_carry_2;
     
     
+    
 // wires declarations for the pipelined implementation 
     wire [31:0] IF_ID_PC, IF_ID_Inst;
 // IF-ID register initialization
@@ -68,7 +71,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     wire [3:0] ID_EX_Func;
     wire [4:0] ID_EX_Rs1, ID_EX_Rs2, ID_EX_Rd;
     
-    register #(159) ID_EX (clk,
+    register #(159) ID_EX (neg_clk,
     {reg_write,
     mem_to_reg,
     can_branch,
@@ -133,7 +136,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     wire [4:0] MEM_WB_Ctrl;
     wire [4:0] MEM_WB_Rd;
     
-    register #(74) MEM_WB (clk,
+    register #(74) MEM_WB (neg_clk,
     {
     EX_MEM_Ctrl[8:7],
     EX_MEM_Ctrl[2:0],
@@ -152,11 +155,24 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     assign PC_ext = PC;
     
     assign PC_in_ext = PC_in;
-    register#(32)program_counter (clk, final_pc, rst, 1'b1, PC);
+    register#(32)program_counter (neg_clk, final_pc, rst, 1'b1, PC);
     
+    
+    wire [31:0]mem_addr;
+    wire final_mem_read;
+    wire final_mem_write;
+    wire [2:0]final_mem_func;
+    assign mem_addr = ~clk ? PC : EX_MEM_ALU_out[5:0];
+    assign final_mem_read = ~clk ? 1'b1 : EX_MEM_Ctrl[5];
+    assign final_mem_write = ~clk ? 1'b0 : EX_MEM_Ctrl[4];    
+    assign final_mem_func = ~clk ? 3'b010 : EX_MEM_func;
     
     assign inst_out_ext = inst_out;
-    InstMem inst_mem (PC, inst_out);
+    wire [31:0]mem_out;
+    DataMem inst_mem (~clk, final_mem_read, final_mem_write, mem_addr, final_mem_func, EX_MEM_RegR2, mem_out);
+    assign inst_out = ~clk ? mem_out : 32'h00_00_00_33;
+    assign data_mem_out = ~clk ? mem_out : 1'b1;
+//    clk, EX_MEM_Ctrl[5], EX_MEM_Ctrl[4], EX_MEM_ALU_out[5:0], EX_MEM_func ,EX_MEM_RegR2, data_mem_out
     
     
     assign branch_ext = can_branch;
@@ -204,7 +220,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     
     
     assign data_mem_out_ext = data_mem_out;
-    DataMem data_mem (clk, EX_MEM_Ctrl[5], EX_MEM_Ctrl[4], EX_MEM_ALU_out[5:0], EX_MEM_func ,EX_MEM_RegR2, data_mem_out);
+//    DataMem data_mem (clk, EX_MEM_Ctrl[5], EX_MEM_Ctrl[4], EX_MEM_ALU_out[5:0], EX_MEM_func ,EX_MEM_RegR2, data_mem_out);
    
     
     
@@ -213,9 +229,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     
    
     assign pc_gen_out_ext = pc_gen_out;
-    // shouldn't be ID_EX_RegR1. PG
-    assign pc_gen_in = EX_MEM_Ctrl[3] ?   ID_EX_RegR1: EX_MEM_BranchAddOut;
-    // should be pc_gen_in instead of EX_MEM_BranchAddOut. PB
+    assign pc_gen_in = EX_MEM_Ctrl[3] ?   ID_EX_RegR1 : EX_MEM_BranchAddOut;
     ripple pc_gen (ID_EX_PC, ID_EX_Imm, pc_gen_out, dummy_carry);
     
     
@@ -230,11 +244,8 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
         
     
     assign jump_mux = (ID_EX_Ctrl[1:0] == 2'b00) ? alu_out : (ID_EX_Ctrl[1:0] == 2'b01) ? pc_gen_out : (ID_EX_Ctrl[1:0] == 2'b10) ? (ID_EX_PC + 4) : ID_EX_RegR2;
-    //
-    // WE STOPPED HERE TO BE CONTINUED......
     
     multiplexer pc_mux (pc_inc_out, EX_MEM_BranchAddOut, (EX_MEM_Ctrl[6] & should_branch) , PC_in);
-    assign new_PC_in = pc_gen_sel ? PC_in >> 2 : PC_in;  
+    assign new_PC_in = pc_gen_sel ? PC_in >> 2 : PC_in;
     assign final_pc = (MEM_WB_Ctrl[2] & inst_out[20])? PC : new_PC_in;
-//    assign pc_in = pc_gen_sel ? pc_gen_out >> 2 : pc_inc_out;
 endmodule

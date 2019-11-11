@@ -40,8 +40,7 @@ module DataMem (input clk, input MemRead, input MemWrite, input [5:0] addr,input
     end
 
 
-    always @(*)
-    begin
+always @(*)    begin
         if (MemRead & ~MemWrite) begin
             if (func3 == 3'b010) //LW
                 data_out={mem[addr+3],mem[addr+2],mem[addr+1],mem[addr]};
@@ -61,9 +60,7 @@ module DataMem (input clk, input MemRead, input MemWrite, input [5:0] addr,input
     end
     
     initial begin
-        {mem[3],mem[2],mem[1],mem[0]} = 32'd17;
-        {mem[7],mem[6],mem[5],mem[4]} = 32'd9;
-        {mem[11],mem[10],mem[9],mem[8]} = 32'd25;
+        $readmemh("C:/Users/solomspd/project_1/project_1.srcs/sources_1/new/rars.mem", mem);  
     end
       
 endmodule
