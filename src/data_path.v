@@ -17,7 +17,9 @@
 * 26/10/19 - modified control signals according to new control signals.
 * 28/10/19 - polish. added jump muxes. lots of bug fixes.
 * 29/10/19 - added muxes for break and call. bug fixes.
-*
+* 8/11/2019 - implemented the pipelined data path
+* 10/11/2019- Tested the pipelined data path and added the *forwarding unit and modified the data path accordingly
+* 11/11/2019- Added the unified single ported memory and tested it. Also, tested the whole module
 **********************************************************************/
 `include "defines.v"
 module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_ext, mem_read_ext, mem_to_reg_ext, mem_write_ext, alu_src_ext, reg_write_ext,
