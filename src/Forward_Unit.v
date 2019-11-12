@@ -1,23 +1,27 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 11/05/2019 05:05:31 PM
-// Design Name: 
-// Module Name: Forward_Unit
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
+/*******************************************************************
+
+*
+
+* Module: shifter.v
+
+* Project: RISC-V FPGA Implementation and Testing 
+
+* Author: 
+
+* Ahmed Ibrahim  ahmeddibrahim@aucegypt.edu
+
+* Abd El-Salam   solomspd@aucegypt.edu
+
+* Andrew Kamal   andrewk.kamal@aucegypt.edu
+
+* Rinal Mohamed  rinalmohamed@aucegypt.edu
+
+* Description: This module is just a forwarding unit that is responsible for handling data hazards.
+
+* Change history: 10/11/2019 module added to the project 
+*
+**********************************************************************/
 
 
 module Forward_Unit(
