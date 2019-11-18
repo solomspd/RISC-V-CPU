@@ -22,8 +22,9 @@ module control_unit(input [4:0]inst, output reg branch, memRead, memtoReg, memWr
 
 always @(*) begin
     case(inst) 
-
-        `OPCODE_Arith_R: begin
+        
+        
+        `OPCODE_Arith_R: begin // ASSUMING THAT MUL IS ALSO AN R INSTRUCTION
             branch=0;
             memRead=0;
             memtoReg=0;
@@ -145,8 +146,8 @@ always @(*) begin
                 memtoReg=0;
                 rd_sel=2'b00;
                 sys=1;
-                end                                 
-
+                end
+    
          default: begin 
             branch = 0;
             memRead = 0;

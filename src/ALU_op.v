@@ -16,15 +16,34 @@
 **********************************************************************/
 
 `include "defines.v"
-module ALU_op(input [1:0]op_in, input [2:0]inst_1, input inst_2, output reg [3:0]op_out);
+module ALU_op(input [1:0]op_in,input ID_Ex_Func25,input [2:0]inst_1, input inst_2, output reg [3:0]op_out);
 
 always @(*) begin
     
     case (op_in)
-        2'b00: op_out = `ALU_ADD;
+        2'b00:
+           op_out = `ALU_ADD;
+         
         2'b01: op_out = `ALU_SUB;
+        
         // R Format 
-        2'b10: case (inst_1)
+        2'b10: 
+         if(ID_Ex_Func25==1'b1)
+                    begin
+                    case(inst_1)
+                      `F3_MUL: op_out= `ALU_MUL;
+                      `F3_MULH:op_out= `ALU_MULH;
+                      `F3_MULHSU:op_out= `ALU_MULHSU;
+                      `F3_MULHU:op_out= `ALU_MULHU;
+                      `F3_DIV :op_out= `ALU_DIV;
+                      `F3_DIVU:op_out= `ALU_DIVU;
+                      `F3_REM: op_out= `ALU_REM;
+                      `F3_REMU:op_out= `ALU_REMU;
+                      endcase
+                      end
+                      
+                   else
+        case (inst_1)
             // if intruction30 ==1 ALU_SUB else ALU_ADD
             `F3_ADD: op_out = inst_2 ? `ALU_SUB : `ALU_ADD;
             
@@ -44,7 +63,9 @@ always @(*) begin
 		
 		endcase
             
- 	  2'b11: case (inst_1)
+ 	  2'b11: 
+ 	  
+ 	  case (inst_1)
 		    `F3_ADD: op_out = `ALU_ADD;
             
             `F3_AND: op_out =  `ALU_AND; 

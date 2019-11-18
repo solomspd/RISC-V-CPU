@@ -1,9 +1,6 @@
 `timescale 1ns / 1ps
-
 `include "defines.v"
-
 module compressed (input [15:0]in, output reg [31:0]out);
-
 always @(*) begin
     out[`IR_funct3] = in[13:15];
     case (in[1:0])
@@ -113,6 +110,7 @@ always @(*) begin
                         out[`IR_opcode] = `OPCODE_Branch;
                     end
             endcase
+            end
             2'b10: begin
                     case(in[15:13])
                         3'b000: begin // SLLI
@@ -149,7 +147,7 @@ always @(*) begin
                             end
                     endcase
                 end
-         end
+//         end
     endcase
 end
 endmodule

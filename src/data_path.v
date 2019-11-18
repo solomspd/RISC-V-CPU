@@ -44,7 +44,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     wire [31:0]read_data_2;
     wire carry_flag, zero_flag, over_flag, sign_flag;
     wire [31:0]alu_mux_out;
-    wire [3:0] alu_ctrl_out;
+    wire [4:0] alu_ctrl_out;
     wire [31:0]alu_out;
     wire should_branch;
     wire [31:0]data_mem_out;

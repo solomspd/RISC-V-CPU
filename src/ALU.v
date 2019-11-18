@@ -38,7 +38,8 @@ module prv32_ALU(
     
     wire[31:0] sh;
     shifter shifter0(a, shamt, alufn[1:0], sh);
-    
+    wire[63:0]m;
+    assign m = a*b;
     always @ * begin
         r = 0;
         (* parallel_case *)
@@ -57,7 +58,22 @@ module prv32_ALU(
             `ALU_SRA:  r=sh;
             // slt & sltu
             `ALU_SLT:  r = {31'b0,(sf != vf)}; 
-            `ALU_SLTU:  r = {31'b0,(~cf)};            	
+            `ALU_SLTU:  r = {31'b0,(~cf)};  
+            
+            
+            `ALU_MUL : r=m[31:0]; // signed mul
+            `ALU_MULHU:  r=m[63:32];
+            `ALU_MULH: r=$signed(a[63:32])* $signed (b[63:32]);
+            `ALU_MULHSU:  r=$signed(a[63:32])*b[63:32];
+            
+            
+            `ALU_DIV: r= $signed(a)/$signed(b);// signed div
+            `ALU_DIVU:r= a/b;// unsigned div
+           
+           
+            `ALU_REM: r= $signed(a)%$signed(b);// signed rem
+            `ALU_REMU:r= a%b;// unsigned div
+
         endcase
     end
 endmodule
