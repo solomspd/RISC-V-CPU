@@ -243,7 +243,8 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     
     assign PC_inc_ext = pc_inc_out;
    
-    ripple pc_inc (PC, 4, pc_inc_out, dummy_carry_2);
+        ripple pc_inc (PC, inst_out[1:0] ?  3'd4 : 3'd2, pc_inc_out, dummy_carry_2);
+
     
     
     multiplexer write_back (MEM_WB_ALU_out, MEM_WB_Mem_out, MEM_WB_Ctrl[3], write_data);
