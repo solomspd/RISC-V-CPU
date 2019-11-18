@@ -16,7 +16,7 @@
 **********************************************************************/
 
 `include "defines.v"
-module ALU_op(input [1:0]op_in,input ID_Ex_Func25,input [2:0]inst_1, input inst_2, output reg [3:0]op_out);
+module ALU_op(input [1:0]op_in,input ID_Ex_Func25,input [2:0]inst_1, input inst_2, output reg [4:0]op_out);
 
 always @(*) begin
     

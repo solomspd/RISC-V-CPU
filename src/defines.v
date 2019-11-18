@@ -76,4 +76,7 @@
 `define     SYS_CSRRSI      3'b110
 `define     SYS_CSRRCI      3'b111
 
-
+`define     strongly_taken  2'b11
+`define     slightly_taken  2'b10
+`define     slightly_NT     2'b01
+`define     strongly_NT     2'b00

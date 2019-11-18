@@ -16,7 +16,7 @@
 *
 **********************************************************************/
 
-module DataMem (input clk, input MemRead, input MemWrite, input [5:0] addr,input [2:0]func3, input [31:0] data_in, output reg [31:0]  data_out);
+module DataMem (input clk, input MemRead, input MemWrite, input [31:0] addr,input [2:0]func3, input [31:0] data_in, output reg [31:0]  data_out);
     reg [7:0] mem [(4*1024-1):0]; 
     
     always @(posedge clk) 
@@ -59,8 +59,7 @@ always @(*)    begin
          end
     end
     
-    initial begin
-        $readmemh("C:/Users/solomspd/project_1/project_1.srcs/sources_1/new/rars.mem", mem);  
-    end
+    initial $readmemh("rars.mem", mem);  
+    
       
 endmodule
