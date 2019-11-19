@@ -59,7 +59,7 @@ always @(*)    begin
          end
     end
     
-    initial begin $readmemh("rars.mem", mem); end  
+    initial begin $readmemh("compressed.mem", mem); end  
     
       
 endmodule
