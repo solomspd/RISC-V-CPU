@@ -2,20 +2,21 @@
 `include "defines.v"
 module compressed (input [15:0]in, output reg [31:0]out);
 always @(*) begin
-    out[`IR_funct3] = in[13:15];
+    out[`IR_funct3] = in[15:13];
+    out[1:0] = 2'b11;
     case (in[1:0])
         2'b00: begin // load and store
-            out[`IR_rs1] = in[7:9] + 4'b1000;
-            case (in[13:15])
+            out[`IR_rs1] = in[9:7] + 4'b1000;
+            case (in[15:13])
                 3'b010: begin // LW
                         out[`IR_funct3] = 3'b010;
-                        out[`IR_rd] = in[2:4] + 4'b1000;
+                        out[`IR_rd] = in[4:2] + 4'b1000;
                         out[`IR_opcode] = `OPCODE_Load;
                         out[`IR_csr] = {in[5], in[12:10], in[6], 2'b00};
                     end
                 3'b110: begin // SW
                         out[`IR_funct3] = 3'b010;
-                        out[`IR_rs2] = in[2:4] + 4'b1000;
+                        out[`IR_rs2] = in[4:2] + 4'b1000;
                         out[`IR_opcode] = `OPCODE_Store;
                         out[`IR_funct7] = in[12];
                         out[`IR_rd] = {in[11:10], in[6], 2'b00};
@@ -26,7 +27,7 @@ always @(*) begin
             case (in[15:13])
                 3'b000: begin // ADDI
                         out[`IR_funct3] = 3'b000;
-                        out[`IR_csr] = {in[12], in[6:2]};
+                        out[`IR_csr] = $signed({in[12], in[6:2]});
                         out[`IR_opcode] = `OPCODE_Arith_I;
                         out[`IR_rd] = in[11:7];
                         out[`IR_rs1] = in[11:7];
@@ -38,7 +39,7 @@ always @(*) begin
                         out[`IR_opcode] = `OPCODE_JAL;
                     end
                 3'b010: begin // LUI
-                        out[17:12] = {in[12], in[6:2]};
+                        out[31:12] = $signed({in[12], in[6:2]});
                         out[`IR_rd] = {in[11:7]};
                         out[`IR_opcode] = `OPCODE_LUI;
                     end
@@ -62,7 +63,7 @@ always @(*) begin
                                 end
                             2'b10: begin // ANDI
                                     out[`IR_funct3] = 3'b111;
-                                    out[`IR_csr] = {in[12], in[6:2]};
+                                    out[`IR_csr] = $signed({in[12], in[6:2]});
                                     out[`IR_rd] = in[9:7] + 4'b1000;
                                     out[`IR_rs1] = in[9:7] + 4'b1000;
                                     out[`IR_opcode] = `OPCODE_Arith_I;
@@ -95,16 +96,16 @@ always @(*) begin
                     end
                 3'b110: begin // BEQ
                         out[`IR_funct3] = 3'b000;
-                        out[`IR_rd] = {in[11:10], in[4:3], 1'b0};
-                        out[28:25] = {in[12], in[6:5], in[2]};
+                        out[`IR_rd] = {in[11:10], in[4:3], in[12]};
+                        out[31:25] = $signed({in[12], in[6:5], in[2]});
                         out[`IR_rs1] = in[9:7] + 4'b1000;
                         out[`IR_rs2] = 5'b00000;
                         out[`IR_opcode] = `OPCODE_Branch;
                     end
                 3'b111: begin // BNE
                         out[`IR_funct3] = 001;
-                        out[`IR_rd] = {in[11:10], in[4:3], 1'b0};
-                        out[28:25] = {in[12], in[6:5], in[2]};
+                        out[`IR_rd] = {in[11:10], in[4:3], in[12]};
+                        out[28:25] = $signed({in[12], in[6:5], in[2]});
                         out[`IR_rs1] = in[9:7] + 4'b1000;
                         out[`IR_rs2] = 5'b00000;
                         out[`IR_opcode] = `OPCODE_Branch;
