@@ -196,7 +196,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     wire final_mem_read;
     wire final_mem_write;
     wire [2:0]final_mem_func;
-    assign mem_addr = ~clk ? PC : EX_MEM_ALU_out + 6'd44;
+    assign mem_addr = ~clk ? PC : EX_MEM_ALU_out + 6'd48;
     assign final_mem_read = ~clk ? 1'b1 : EX_MEM_mem_read;
     assign final_mem_write = ~clk ? 1'b0 : EX_MEM_mem_write;    
     assign final_mem_func = ~clk ? 3'b010 : EX_MEM_func;
@@ -268,15 +268,16 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
    
     
     
-    assign shift_ext = shift_out;
-    shift pc_shift (ID_EX_Imm, shift_out);
+//    assign shift_ext = shift_out;
+//    shift pc_shift (ID_EX_Imm, shift_out);
     
    
     assign pc_gen_out_ext = pc_gen_out;
     assign pc_gen_in = EX_MEM_pc_gen_sel ?   ID_EX_RegR1 : EX_MEM_BranchAddOut;
-    ripple pc_gen (ID_EX_PC, ID_EX_Imm, pc_gen_out, dummy_carry);
     
-    
+//    ripple pc_gen (ID_EX_PC, ID_EX_Imm, pc_gen_out, dummy_carry);
+      
+     ripple pc_gen (IF_ID_PC, imm_out, pc_gen_out, dummy_carry);
     
     
     assign PC_inc_ext = pc_inc_out;
@@ -299,7 +300,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
 
     assign jump_mux = (ID_EX_rd_sel == 2'b00) ? alu_out : (ID_EX_rd_sel == 2'b01) ? pc_gen_out : (ID_EX_rd_sel == 2'b10) ? (ID_EX_PC + 4) : ID_EX_RegR2;
     
-    multiplexer pc_mux (pc_inc_out, EX_MEM_BranchAddOut,(EX_MEM_can_branch & flag_comp) , PC_in);
-    assign new_PC_in = pc_gen_sel ? PC_in >> 2 : PC_in;
+    multiplexer pc_mux (pc_inc_out, pc_gen_out,flag_comp , PC_in);
+    assign new_PC_in = pc_gen_sel ? PC_in & -2 : PC_in;
     assign final_pc = (MEM_WB_sys & inst_out[20])? PC : new_PC_in;
 endmodule
