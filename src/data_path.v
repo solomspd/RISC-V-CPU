@@ -55,6 +55,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     wire dummy_carry_2;
 	wire [1:0] forwardA, forwardB;
 	wire [31:0] inputA, inputB; 
+	wire stall ;
 
     
     
@@ -66,7 +67,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     {PC,
     inst_out},
     rst,
-    1'b1,
+    !stall,
     {IF_ID_PC,
     IF_ID_Inst} );
     // wires declarations for the pipelined implementation 
@@ -75,8 +76,8 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     wire [1:0] ID_EX_alu_op, ID_EX_rd_sel; 
     wire [3:0] ID_EX_Func;
     wire [4:0] ID_EX_Rs1, ID_EX_Rs2, ID_EX_Rd;
-    
-    register #(159) ID_EX (neg_clk,
+    wire ID_Ex_Func25;
+    register #(160) ID_EX (neg_clk,
     {reg_write,
     mem_to_reg,
     can_branch,
@@ -91,6 +92,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     read_data_1,
     read_data_2,
     imm_out,
+    IF_ID_Inst[25],
     IF_ID_Inst[30],
     IF_ID_Inst[`IR_funct3],
     IF_ID_Inst[`IR_rs1],
@@ -112,6 +114,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     ID_EX_RegR1,
     ID_EX_RegR2,
     ID_EX_Imm,
+    ID_Ex_Func25,
     ID_EX_Func,
     ID_EX_Rs1,
     ID_EX_Rs2,
@@ -186,7 +189,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     assign PC_ext = PC;
     
     assign PC_in_ext = PC_in;
-    register#(32)program_counter (neg_clk, final_pc, rst, 1'b1, PC);
+    register#(32)program_counter (neg_clk, final_pc, rst, !stall, PC);
     
     
     wire [31:0]mem_addr;
@@ -217,15 +220,26 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
    
     control_unit controlUnit (IF_ID_Inst[6:2], can_branch, mem_read, mem_to_reg, mem_write, alu_src, reg_write,sys, alu_op, rd_sel, pc_gen_sel);
     
-    
+//    module Hazard_Unit_prediction(
+//    input [4:0] IF_ID_RegisterRs1,ID_EX_RegisterRd,IF_ID_RegisterRs2,
+//    input [31:0]IF_ID_Inst,
+//    input ID_EX_MemRead,
+//    output reg stall
+//        );
+
+    Hazard_Unit_prediction hazard_detection(IF_ID_Inst[`IR_rs1], IF_ID_Inst[`IR_rs2],IF_ID_Inst[11:7],IF_ID_Inst[4:0],ID_EX_MemRead,stall   );
     assign write_data_ext = write_data;
-    
     assign data_read_1_ext = read_data_1;
        
     assign data_read_2_ext = read_data_2;
     RegFile reg_file (clk, rst, IF_ID_Inst[`IR_rs1],IF_ID_Inst[`IR_rs2], MEM_WB_Rd,
     write_data, MEM_WB_reg_write, read_data_1, read_data_2);
+    wire flag_comp;
     
+//    comparators(input [2:0]func3,
+//   input [31:0] inputA, inputB, output reg flag
+//       );
+    comparators comp(IF_ID_Inst[`IR_funct3],can_branch, read_data_1, read_data_2, flag_comp );
   
     
     assign imm_out_ext = imm_out;
@@ -237,7 +251,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     
    
     assign alu_ctrl_out_ext = alu_ctrl_out;
-    ALU_op aluOp (ID_EX_alu_op ,ID_EX_Func[2:0],ID_EX_Func[3],alu_ctrl_out);
+    ALU_op aluOp (ID_EX_alu_op ,ID_Ex_Func25,ID_EX_Func[2:0],ID_EX_Func[3],alu_ctrl_out);
     
     
     assign z_flag_ext = zero_flag;
@@ -247,7 +261,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     prv32_ALU alu (inputA, alu_mux_out, imm_out[4:0], alu_out, carry_flag, zero_flag, over_flag, sign_flag, alu_ctrl_out);
 
     
-    branch branch_mod (ID_EX_Func[2:0] , EX_MEM_branch[3], EX_MEM_branch[2], EX_MEM_branch[1], EX_MEM_branch[0], should_branch);
+   // branch branch_mod (ID_EX_Func[2:0] , EX_MEM_branch[3], EX_MEM_branch[2], EX_MEM_branch[1], EX_MEM_branch[0], should_branch);
     
     
     assign data_mem_out_ext = data_mem_out;
@@ -285,7 +299,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
 
     assign jump_mux = (ID_EX_rd_sel == 2'b00) ? alu_out : (ID_EX_rd_sel == 2'b01) ? pc_gen_out : (ID_EX_rd_sel == 2'b10) ? (ID_EX_PC + 4) : ID_EX_RegR2;
     
-    multiplexer pc_mux (pc_inc_out, EX_MEM_BranchAddOut, (EX_MEM_can_branch & should_branch) , PC_in);
+    multiplexer pc_mux (pc_inc_out, EX_MEM_BranchAddOut,(EX_MEM_can_branch & flag_comp) , PC_in);
     assign new_PC_in = pc_gen_sel ? PC_in >> 2 : PC_in;
     assign final_pc = (MEM_WB_sys & inst_out[20])? PC : new_PC_in;
 endmodule
