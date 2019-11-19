@@ -22,16 +22,15 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-
+ 
 module Hazard_Unit_prediction(
-input [4:0] IF_ID_RegisterRs1,ID_EX_RegisterRd,IF_ID_RegisterRs2,
-input [31:0]IF_ID_Inst,
-input ID_EX_MemRead,
+input [4:0] inst_rs1,inst_rs2,IF_ID_RegisterRd,
+input branch,
 output reg stall
     );
     always@(*)
     begin
-    if (((IF_ID_RegisterRs1==ID_EX_RegisterRd) || (IF_ID_RegisterRs2==ID_EX_RegisterRd)) && ID_EX_MemRead && (ID_EX_RegisterRd != 0)&& (IF_ID_Inst[4:0]==`OPCODE_Branch))
+    if (( (inst_rs1==IF_ID_RegisterRd) || (inst_rs2==IF_ID_RegisterRd))  && (IF_ID_RegisterRd != 0)&& (branch))
     stall = 1;
     else 
     stall = 0; 

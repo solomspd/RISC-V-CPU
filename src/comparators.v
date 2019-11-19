@@ -21,62 +21,22 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module comparators(input [2:0]func3,
+module comparators(input [2:0]func3,input branch,
 input [31:0] inputA, inputB, output reg flag
     );
-    always@(*)
-    begin
-     case (func3 )
-           `BR_BEQ:
-           begin
-                if($signed(inputA)==$signed(inputB)) 
-                     flag=1;
-                 else 
-                      flag=0;
-            end
-           
-           `BR_BNE:
-           begin
-                if($signed(inputA)!=$signed(inputB)) 
-                    flag=1;
-                else 
-                    flag=0;
-            end
-
-           `BR_BLT:
-           begin
-                if($signed(inputA)<$signed(inputB)) 
-                    flag=1;
-                else 
-                    flag=0;
-            end
-            
-           `BR_BGE:
-            begin
-                 if($signed(inputA)<=$signed(inputB)) 
-                     flag=1;
-                 else 
-                     flag=0;
-             end
-
-           `BR_BLTU:
-            begin
-                 if(inputA<inputB) 
-                     flag=1;
-                 else 
-                     flag=0;
-             end
- 
-           `BR_BGEU:
-              begin
-                   if(inputAinputB) 
-                       flag=1;
-                   else 
-                       flag=0;
-               end
-               
-             
-
-    endcase
+    always@(*) begin
+        if(branch)
+        begin
+             case (func3 )
+               `BR_BEQ: flag = $signed(inputA)==$signed(inputB);
+               `BR_BNE: flag = $signed(inputA)!=$signed(inputB);
+               `BR_BLT: flag = $signed(inputA)<$signed(inputB);
+               `BR_BGE: flag = $signed(inputA)>=$signed(inputB);
+               `BR_BLTU: flag = inputA < inputB;
+               `BR_BGEU: flag = inputA >= inputB;
+              endcase
+          end else begin
+            flag = 0;
+          end
       end
 endmodule

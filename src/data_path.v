@@ -47,7 +47,6 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     wire [31:0]alu_out;
     wire should_branch;
     wire [31:0]data_mem_out;
-    wire [31:0]shift_out;
     wire [31:0]pc_gen_out;
     wire dummy_carry;
     wire [31:0]pc_gen_in;
@@ -189,7 +188,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     assign PC_ext = PC;
     
     assign PC_in_ext = PC_in;
-    register#(32)program_counter (neg_clk, final_pc, rst, !stall, PC);
+    register#(32)program_counter (neg_clk, final_pc, rst, ~stall, PC);
     
     
     wire [31:0]mem_addr;
@@ -212,7 +211,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     assign branch_ext = can_branch;
     assign mem_read_ext = mem_read;
     assign mem_to_reg_ext = mem_to_reg;
-    assign mem_write_ext = mem_write;
+    assign mem_write_ext = mem_write; 
     assign alu_src_ext = alu_src;
     assign reg_write_ext = reg_write;
     
@@ -227,7 +226,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
 //    output reg stall
 //        );
 
-    Hazard_Unit_prediction hazard_detection(IF_ID_Inst[`IR_rs1], IF_ID_Inst[`IR_rs2],IF_ID_Inst[11:7],IF_ID_Inst[4:0],ID_EX_MemRead,stall   );
+    Hazard_Unit_prediction hazard_detection(IF_ID_Inst[`IR_rs1], IF_ID_Inst[`IR_rs2],ID_EX_Rd,can_branch,stall   );
     assign write_data_ext = write_data;
     assign data_read_1_ext = read_data_1;
        
@@ -236,10 +235,10 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     write_data, MEM_WB_reg_write, read_data_1, read_data_2);
     wire flag_comp;
     
-//    comparators(input [2:0]func3,
+//    comparators(input [2:0]func3,lmar
 //   input [31:0] inputA, inputB, output reg flag
 //       );
-    comparators comp(IF_ID_Inst[`IR_funct3],can_branch, read_data_1, read_data_2, flag_comp );
+    comparators comp(IF_ID_Inst[`IR_funct3], can_branch, read_data_1, read_data_2, flag_comp );
   
     
     assign imm_out_ext = imm_out;
@@ -274,10 +273,10 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
    
     assign pc_gen_out_ext = pc_gen_out;
     assign pc_gen_in = EX_MEM_pc_gen_sel ?   ID_EX_RegR1 : EX_MEM_BranchAddOut;
-    
-//    ripple pc_gen (ID_EX_PC, ID_EX_Imm, pc_gen_out, dummy_carry);
+     
+    ripple pc_gen (IF_ID_PC, imm_out, pc_gen_out, dummy_carry);
       
-     ripple pc_gen (IF_ID_PC, imm_out, pc_gen_out, dummy_carry);
+//     ripple pc_gen (IF_ID_PC, imm_out, pc_gen_out, dummy_carry);
     
     
     assign PC_inc_ext = pc_inc_out;
@@ -300,7 +299,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
 
     assign jump_mux = (ID_EX_rd_sel == 2'b00) ? alu_out : (ID_EX_rd_sel == 2'b01) ? pc_gen_out : (ID_EX_rd_sel == 2'b10) ? (ID_EX_PC + 4) : ID_EX_RegR2;
     
-    multiplexer pc_mux (pc_inc_out, pc_gen_out,flag_comp , PC_in);
+    multiplexer pc_mux (pc_inc_out, pc_gen_out, flag_comp , PC_in);
     assign new_PC_in = pc_gen_sel ? PC_in & -2 : PC_in;
     assign final_pc = (MEM_WB_sys & inst_out[20])? PC : new_PC_in;
 endmodule
