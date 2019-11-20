@@ -39,6 +39,7 @@ always @(*) begin
                       `F3_DIVU:op_out= `ALU_DIVU;
                       `F3_REM: op_out= `ALU_REM;
                       `F3_REMU:op_out= `ALU_REMU;
+                      default: op_out= 32'b0;
                       endcase
                       end
                       
@@ -60,7 +61,7 @@ always @(*) begin
             `F3_SLT: op_out= `ALU_SLT;
 
             `F3_SLTU:op_out= `ALU_SLTU;
-		
+		    default: op_out= 32'b0;
 		endcase
             
  	  2'b11: 

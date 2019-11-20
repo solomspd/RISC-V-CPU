@@ -21,6 +21,7 @@ always @(*) begin
                         out[`IR_funct7] = in[12];
                         out[`IR_rd] = {in[11:10], in[6], 2'b00};
                     end
+                default: out = 32'b0;
             endcase
          end
          2'b01: begin
@@ -90,8 +91,10 @@ always @(*) begin
                                                 out[`IR_funct3] = 3'b111;
                                                 out[`IR_funct7] = 3'b0000000;
                                             end
+                                        default: out = 32'b0;
                                     endcase
                                 end
+                                default: out = 32'b0;
                         endcase
                     end
                 3'b110: begin // BEQ
@@ -110,6 +113,9 @@ always @(*) begin
                         out[`IR_rs2] = 5'b00000;
                         out[`IR_opcode] = `OPCODE_Branch;
                     end
+                    
+                    default: out = 32'b0;
+
             endcase
             end
             2'b10: begin
@@ -146,9 +152,10 @@ always @(*) begin
                                     out[`IR_funct7] = 7'b0000000;
                                 end
                             end
+                        default: out = 32'b0;
                     endcase
                 end
-//         end
+                default: out = 32'b0;
     endcase
 end
 endmodule

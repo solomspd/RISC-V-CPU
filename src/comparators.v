@@ -34,6 +34,7 @@ input [31:0] inputA, inputB, output reg flag
                `BR_BGE: flag = $signed(inputA)>=$signed(inputB);
                `BR_BLTU: flag = inputA < inputB;
                `BR_BGEU: flag = inputA >= inputB;
+               default: flag = 1'b0;
               endcase
           end else begin
             flag = 0;

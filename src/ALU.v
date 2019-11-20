@@ -81,17 +81,24 @@ module prv32_ALU(
              end
             `ALU_MULHSU: 
             begin
-                msu= $signed(a)* b;
+                msu= $signed(a)* b; 
                 r=msu[63:32];// signed and unsigned
             end
             
-            `ALU_DIV: r= $signed(a)/$signed(b);// signed div
-            `ALU_DIVU:r= a/b;// unsigned div
-           
+            `ALU_DIV:
+            begin 
+            if(b!=0)
+            r= $signed(a)/$signed(b);// signed div
+            end
+            `ALU_DIVU:
+             begin 
+               if(b!=0)
+                r= a/b;// unsigned div
+               end
            
             `ALU_REM: r= $signed(a)%$signed(b);// signed rem
             `ALU_REMU:r= a%b;// unsigned div
-
+            default: r = 32'b0;
         endcase
     end
 endmodule

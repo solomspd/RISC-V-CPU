@@ -17,7 +17,7 @@
 **********************************************************************/
 
 module DataMem (input clk, input MemRead, input MemWrite, input [31:0] addr,input [2:0]func3, input [31:0] data_in, output reg [31:0]  data_out);
-    reg [7:0] mem [(4*1024-1):0]; 
+    reg [7:0] mem [(200):0]; 
     
     always @(posedge clk) 
     begin
@@ -59,7 +59,8 @@ always @(*)    begin
          end
     end
     
-    initial begin $readmemh("compressed.mem", mem); end  
+    initial begin $readmemh("rars.mem", mem); end  
     
+        
       
 endmodule

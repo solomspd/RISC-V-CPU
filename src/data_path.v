@@ -61,12 +61,14 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     
 // wires declarations for the pipelined implementation 
     wire [31:0] IF_ID_PC, IF_ID_Inst;
+  //                                                                                                                                                                                                                                                                                                       ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff                                            fffffffffff                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd                                                                                                       assign select_instruction= (stall)? 32'h33000000:inst_out;
+
 // IF-ID register initialization
     register #(64) IF_ID (clk,
     {PC,
     inst_out},
     rst,
-    !stall,
+    ~stall,
     {IF_ID_PC,
     IF_ID_Inst} );
     // wires declarations for the pipelined implementation 
@@ -202,11 +204,14 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     
     assign inst_out_ext = inst_out;
     wire [31:0]mem_out;
+    wire [31:0]mem_inst_out;
     DataMem inst_mem (~clk, final_mem_read, final_mem_write, mem_addr, final_mem_func, EX_MEM_RegR2, mem_out);
-    assign inst_out = ~clk ? mem_out : 32'h00_00_00_33;
+    assign mem_inst_out = ~clk & ~stall ? mem_out : 32'h00_00_00_33;
     assign data_mem_out = ~clk ? mem_out : 1'b1;
     
-    
+    wire [31:0]decompressed;
+    compressed decompressor (mem_inst_out, decompressed);
+    assign inst_out = mem_inst_out[1:0] == 2'b11 ? mem_inst_out : decompressed; 
     
     assign branch_ext = can_branch;
     assign mem_read_ext = mem_read;
@@ -218,7 +223,7 @@ module data_path(input clk, input rst, output [31:0]inst_out_ext, output branch_
     assign alu_op_ext = alu_op;
    
     control_unit controlUnit (IF_ID_Inst[6:2], can_branch, mem_read, mem_to_reg, mem_write, alu_src, reg_write,sys, alu_op, rd_sel, pc_gen_sel);
-    
+     
 //    module Hazard_Unit_prediction(
 //    input [4:0] IF_ID_RegisterRs1,ID_EX_RegisterRd,IF_ID_RegisterRs2,
 //    input [31:0]IF_ID_Inst,
